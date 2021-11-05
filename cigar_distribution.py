@@ -68,7 +68,6 @@ def make_tsv(input_file):
             if not line.startswith('@'):
                 splitted_line = line.split('\t')
                 cigar = re.split('(\d+)', splitted_line[5])
-                print(cigar)
                 for i in range(0,len(cigar)):
                     if cigar[i] == 'D':
                         del_list[int(cigar[i-1])] += 1
