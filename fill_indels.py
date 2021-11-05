@@ -8,8 +8,10 @@ max_indel_size = 10
 
 with open(input_file, 'r') as sam:
     for line in sam:
-        splitted_line = line.split('\t')
-        if splitted_line[1] == '16' or splitted_line[1] == '0':
+        if line.startswith('@'):
+            print(line.strip())
+        else:
+            splitted_line = line.split('\t')
             cigar_with_none = re.split('(\d+)', splitted_line[5])
             cigar = filter(None, cigar_with_none)
             cigar_tuples = list(zip(*[iter(cigar)]*2))
@@ -17,6 +19,10 @@ with open(input_file, 'r') as sam:
             for tuple in cigar_tuples:
                 if tuple[1] == 'D' and int(tuple[0]) < max_indel_size:
                     new_cigar.append(str(tuple[0]+'M'))
+                #In case you want to get rid of softclips
+                elif tuple[1] == 'S':
+                    pass
+                #Insertions don't become matches as this would only make the sequence longer
                 elif tuple[1] == 'I' and int(tuple[0]) < max_indel_size:
                     pass
                 else:
